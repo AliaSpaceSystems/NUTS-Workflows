@@ -1,0 +1,26 @@
+apiVersion: batch/v1
+kind: Job
+spec:
+  template:
+    spec:
+      containers:
+        - name: flow
+          livenessProbe:
+            exec:
+              command:
+                - ls
+                - /usr/share/cache_folder/lost+found
+            initialDelaySeconds: 15
+            periodSeconds: 5
+          volumeMounts:
+            - name: prefect-job-cache
+              mountPath: /usr/share/cache_folder
+            - name: prefect-result
+              mountPath: /usr/share/result_folder
+      volumes:
+        - name: prefect-job-cache
+          persistentVolumeClaim:
+            claimName: prefect-job-pvc
+        - name: prefect-result
+          persistentVolumeClaim:
+            claimName: prefect-result-pvc
